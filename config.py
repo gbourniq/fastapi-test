@@ -6,7 +6,7 @@ is renamed or removed.
 
 import os
 
-WEBSERVER_PORT = os.getenv("WEBSERVER_PORT", 5700)
+WEBSERVER_PORT = int(os.getenv("WEBSERVER_PORT", 5700))
 RELOAD = os.getenv("RELOAD", True)
 DEBUG = os.getenv("DEBUG", True)
 WORKERS_COUNT = os.getenv("WORKERS_COUNT", 1)
