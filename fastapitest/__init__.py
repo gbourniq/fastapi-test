@@ -10,3 +10,5 @@ app.mount(
 templates = Jinja2Templates(directory="./fastapitest/templates")
 
 from fastapitest.views import main, tasks
+
+
