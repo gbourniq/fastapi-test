@@ -6,6 +6,7 @@ from enum import Enum
 from uuid import UUID
 
 from fastapi import (
+    APIRouter,
     BackgroundTasks,
     Query,
     Path,
@@ -24,8 +25,7 @@ from fastapi.encoders import jsonable_encoder
 
 from pydantic import BaseModel, Field, HttpUrl, EmailStr
 
-from fastapitest import app
-
+router = APIRouter()
 
 class ModelName(str, Enum):
     """
@@ -87,7 +87,7 @@ def _task_run(
         f.write(content)
 
 
-@app.post(
+@router.post(
     "/task/run/{task_id}",
     status_code=status.HTTP_200_OK,
     tags=["Asynchronous Tasks"],
@@ -111,7 +111,10 @@ async def task_run(
 ) -> Dict:
     """
     Async function that takes in a task and writes into a file
-    by calling the background task `_task_run`
+    by calling the background task `_task_run`.
+    Background tasks suitable for operations that need to happen after a request.
+    (when the client doesn't have to be waiting for the operation to complete before receiving the response.)
+    Eg. Email notifications, data processing, etc.
 
     - **model_name** (Required query param): Name of the model to be selected from the downdown list
     - **item** (Required request body): Item data (defined by the pydantic data model)
@@ -132,7 +135,7 @@ async def task_run(
     return {"message": f"Dry run enabled for {req_data}"}
 
 
-@app.put("/advanced-datatypes/{item_id}", status_code=status.HTTP_200_OK)
+@router.put("/advanced-datatypes/{item_id}", status_code=status.HTTP_200_OK)
 async def advanced_datatypes(
     item_id: UUID = Path(..., example="123e4567-e89b-12d3-a456-426614174000"),
     start_datetime: Optional[datetime] = Body(
@@ -160,12 +163,12 @@ async def advanced_datatypes(
     }
 
 
-@app.get("/header-sample/", status_code=status.HTTP_200_OK)
+@router.get("/header-sample/", status_code=status.HTTP_200_OK)
 async def header_sample(user_agent: Optional[str] = Header(None)):
     return {"User-Agent": user_agent}
 
 
-@app.post("/login-with-form-parameters/")
+@router.post("/login-with-form-parameters/")
 async def login_with_form_params(
     username: str = Form(...), password: str = Form(...)
 ):
@@ -176,14 +179,14 @@ async def login_with_form_params(
 # more info: https://fastapi.tiangolo.com/tutorial/request-files/
 
 
-@app.post("/uploadfiles/")
+@router.post("/uploadfiles/")
 async def create_upload_files(files: List[UploadFile] = File(...)):
     # need to implement saving / reading the file with file.read()
     return {"filenames": [file.filename for file in files]}
 
 
 # Upload file via a web page
-@app.get("/upload/")
+@router.get("/upload/")
 async def main():
     content = """
 <body>
@@ -201,7 +204,7 @@ async def main():
 
 
 # Upload file and form
-@app.post("/upload-files-and-form-data/")
+@router.post("/upload-files-and-form-data/")
 async def create_file(
     file: bytes = File(...),
     fileb: UploadFile = File(...),
@@ -248,7 +251,7 @@ items = {
 }
 
 
-@app.get("/get-items/{item_id}", response_model=SimpleItem)
+@router.get("/get-items/{item_id}", response_model=SimpleItem)
 async def read_item(item_id: str):
     if item_id not in items:
         raise HTTPException(
@@ -259,7 +262,7 @@ async def read_item(item_id: str):
     return items[item_id]
 
 
-@app.put("/update/items/{item_id}", response_model=SimpleItem)
+@router.put("/update/items/{item_id}", response_model=SimpleItem)
 async def update_item(item_id: str, item: SimpleItem):
     update_item_encoded = item.dict()
     items[item_id] = update_item_encoded
@@ -269,7 +272,7 @@ async def update_item(item_id: str, item: SimpleItem):
 # Use PATCH to update specific fields (Partial updates)
 # item.dict(exclude_unset=True) to generate a dict with only the data
 # that was set (sent in the request), omitting default values
-@app.patch("/items/{item_id}", response_model=Item)
+@router.patch("/items/{item_id}", response_model=Item)
 async def update_item(item_id: str, item: Item):
     stored_item_data = items[item_id]
     stored_item_model = Item(**stored_item_data)
@@ -325,7 +328,7 @@ class CommonQueryParams:
 
 
 
-@app.get("/leverage-dep/")
+@router.get("/leverage-dep/")
 async def read_items(commons: CommonQueryParams = Depends(CommonQueryParams)):
     """
     First route that leverage dependencies
@@ -358,7 +361,7 @@ def query_or_cookie_extractor(
     return q
 
 
-@app.get("/query-or-cookie/")
+@router.get("/query-or-cookie/")
 async def read_query_or_cookie_extractor(query_or_default: str = Depends(query_or_cookie_extractor)):
     return {"q_or_cookie": query_or_default}
 
@@ -375,7 +378,7 @@ async def verify_key(x_key: str = Header(default="fake-super-secret-key")):
     return x_key # won't be used because of dependencies
 
 
-@app.get("/dependencies-no-returned-values/exception-handled/", dependencies=[Depends(verify_token), Depends(verify_key)])
+@router.get("/dependencies-no-returned-values/exception-handled/", dependencies=[Depends(verify_token), Depends(verify_key)])
 async def read_items():
     return [{"item": "Foo"}, {"item": "Bar"}]
 

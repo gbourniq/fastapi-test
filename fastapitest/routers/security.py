@@ -19,13 +19,14 @@ Simplified flow:
 """
 from datetime import datetime, timedelta
 from typing import Optional, Dict
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, APIRouter
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from pydantic import BaseModel
 from passlib.context import CryptContext
 
-from fastapitest import app
+
+router = APIRouter()
 
 
 # to get a string like this run:
@@ -136,7 +137,7 @@ async def get_current_active_user(current_user: User = Depends(get_current_user)
     return current_user
 
 
-@app.post("/token", response_model=Token, tags=["Secured APIs"])
+@router.post("/token", response_model=Token, tags=["Secured APIs"])
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     """
     Create a real JWT access token with a given timedelta, and return it.
@@ -156,12 +157,12 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 
 
 
-@app.get("/users/me", tags=["Secured APIs"])
+@router.get("/users/me", tags=["Secured APIs"])
 async def read_users_me(current_user: User = Depends(get_current_active_user)):
     """Displays the current user, that was retrieved directly from the path operation as a dependency"""
     return current_user
 
 
-@app.get("/users/me/items/", tags=["Secured APIs"])
+@router.get("/users/me/items/", tags=["Secured APIs"])
 async def read_own_items(current_user: User = Depends(get_current_active_user)):
     return [{"item_id": "Foo", "owner": current_user.username}]

@@ -1,22 +1,14 @@
-from fastapi import Request, Cookie, status, HTTPException
+from fastapi import Request, Cookie, status, HTTPException, APIRouter
 from typing import Dict, Optional, List, Union
-from fastapitest import app, templates
 from pydantic import BaseModel, Field, HttpUrl, EmailStr
 from fastapi.responses import JSONResponse
 import time
 
-@app.get("/")
-async def index(request: Request):
-    """
-    GET route which returns HTML template,
-    run curl http://0.0.0.0:5700/
-    """
-    return templates.TemplateResponse(
-        "index.html", context={"request": request}
-    )
+
+router = APIRouter()
 
 
-@app.get("/tutorial")
+@router.get("/tutorial")
 async def tutorial():
     """This is a simple GET route, to use this
     run curl http://0.0.0.0:5700/tutorial
@@ -24,7 +16,7 @@ async def tutorial():
     return {"message": {"this is another route"}}
 
 
-@app.post("/index-weights/")
+@router.post("/index-weights/")
 async def create_index_weights(weights: Dict[int, float]):
     """
     Request body to accept any dict as long as it has int keys with float values
@@ -34,7 +26,7 @@ async def create_index_weights(weights: Dict[int, float]):
     return weights
 
 
-@app.get("/cookie-example/")
+@router.get("/cookie-example/")
 async def read_items(ads_id: Optional[str] = Cookie(None)):
     """Cookie example
     declare the cookie parameters using the same structure as with Path and Query.
@@ -74,7 +66,7 @@ def fake_save_user(user_in: UserIn):
     return user_in_db
 
 
-@app.post(
+@router.post(
     "/response-model-sample/create-user/",
     response_model=UserOut,
     status_code=status.HTTP_201_CREATED,
@@ -96,7 +88,7 @@ items = [
 ]
 
 
-@app.get("/response-model-sample-list/items/", response_model=List[SimpleItem])
+@router.get("/response-model-sample-list/items/", response_model=List[SimpleItem])
 async def read_items():
     return items
 
@@ -129,7 +121,7 @@ items = {
 }
 
 
-@app.get(
+@router.get(
     "/get-item-or-404/{item_id}",
     response_model=Union[PlaneItem, CarItem],
     status_code=status.HTTP_200_OK,
@@ -145,55 +137,14 @@ async def read_item(item_id: str):
 
 
 # Response with arbitrary dict
-@app.get("/keyword-weights/", response_model=Dict[str, float])
+@router.get("/keyword-weights/", response_model=Dict[str, float])
 async def read_keyword_weights():
     return {"foo": 2.3, "bar": 3.4}
-
-
-# Custom Exception Handling
-
-
-class UnicornException(Exception):
-    def __init__(self, name: str):
-        self.name = name
-
-
-@app.exception_handler(UnicornException)
-async def unicorn_exception_handler(request: Request, exc: UnicornException):
-    return JSONResponse(
-        status_code=418,
-        content={
-            "message": f"Oops! {exc.name} did something. There goes a rainbow..."
-        },
-    )
-
-
-@app.get("/custom-exception-handler-unicorns/{name}")
-async def read_unicorn(name: str):
-    """
-    Pass `yolo` as the path parameter to trigger the exception
-    """
-    if name == "yolo":
-        raise UnicornException(name=name)
-    return {"unicorn_name": name}
 
 
 # More error handling info here https://fastapi.tiangolo.com/tutorial/handling-errors/
 
 
-@app.get("/deprecated-path/", tags=["items"], deprecated=True)
+@router.get("/deprecated-path/", tags=["items"], deprecated=True)
 async def read_elements():
     return [{"item_id": "Foo"}]
-
-
-
-# Middleware to add a response header such as
-# x-process-time: 0.0004627704620361328 
-# to every requests
-@app.middleware("http")
-async def add_process_time_header(request: Request, call_next):
-    start_time = time.time()
-    response = await call_next(request)
-    process_time = time.time() - start_time
-    response.headers["X-Process-Time"] = str(process_time)
-    return response
