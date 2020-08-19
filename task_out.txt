@@ -1,0 +1,5 @@
+name='Foo' description='A very nice Item' price=35.4 tax=3.2 tags={'green', 'blue'} images=None | alexnet | wfwef | 123 | 2020-08-19 18:15:47.965875
+name='Foo' description='A very nice Item' price=35.4 tax=3.2 tags={'green', 'blue'} images=None | alexnet | wfwef | 123 | 2020-08-19 18:15:57.043471
+name='Foo' description='A very nice Item' price=35.4 tax=3.2 tags={'blue', 'green'} images=None | alexnet | wfwef | 123 | 2020-08-19 18:16:11.428178
+name='Foo' description='A very nice Item' price=35.4 tax=3.2 tags={'blue', 'green'} images=None | alexnet | wfwef | 123 | 2020-08-19 18:16:22.272171
+name='Foo' description='A very nice Item' price=35.4 tax=3.2 tags={'blue', 'green'} images=None | alexnet | dfqwf | 33 | 2020-08-19 18:16:54.936815

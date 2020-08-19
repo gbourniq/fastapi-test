@@ -3,6 +3,7 @@ from typing import Dict, Optional, List, Union
 from fastapitest import app, templates
 from pydantic import BaseModel, Field, HttpUrl, EmailStr
 from fastapi.responses import JSONResponse
+import time
 
 @app.get("/")
 async def index(request: Request):
@@ -31,6 +32,7 @@ async def create_index_weights(weights: Dict[int, float]):
         {"129385": 1.45}
     """
     return weights
+
 
 @app.get("/cookie-example/")
 async def read_items(ads_id: Optional[str] = Cookie(None)):
@@ -72,12 +74,14 @@ def fake_save_user(user_in: UserIn):
     return user_in_db
 
 
-@app.post("/response-model-sample/create-user/", response_model=UserOut, status_code=status.HTTP_201_CREATED)
+@app.post(
+    "/response-model-sample/create-user/",
+    response_model=UserOut,
+    status_code=status.HTTP_201_CREATED,
+)
 async def create_user(user_in: UserIn):
     user_saved = fake_save_user(user_in)
     return user_saved
-
-
 
 
 # Returns List of models
@@ -97,7 +101,7 @@ async def read_items():
     return items
 
 
-# Can return different data models with Union, 
+# Can return different data models with Union,
 # Eg. `response_model=Union[PlaneItem, CarItem]` allows to return both schemas
 
 # + Exception handling 404, with optional headers
@@ -124,10 +128,19 @@ items = {
     },
 }
 
-@app.get("/get-item-or-404/{item_id}", response_model=Union[PlaneItem, CarItem], status_code=status.HTTP_200_OK)
+
+@app.get(
+    "/get-item-or-404/{item_id}",
+    response_model=Union[PlaneItem, CarItem],
+    status_code=status.HTTP_200_OK,
+)
 async def read_item(item_id: str):
     if item_id not in items:
-        raise HTTPException(status_code=404, detail="Oooooops.. Item not found", headers={"X-Error": "There goes my error"})
+        raise HTTPException(
+            status_code=404,
+            detail="Oooooops.. Item not found",
+            headers={"X-Error": "There goes my error"},
+        )
     return items[item_id]
 
 
@@ -139,6 +152,7 @@ async def read_keyword_weights():
 
 # Custom Exception Handling
 
+
 class UnicornException(Exception):
     def __init__(self, name: str):
         self.name = name
@@ -148,7 +162,9 @@ class UnicornException(Exception):
 async def unicorn_exception_handler(request: Request, exc: UnicornException):
     return JSONResponse(
         status_code=418,
-        content={"message": f"Oops! {exc.name} did something. There goes a rainbow..."},
+        content={
+            "message": f"Oops! {exc.name} did something. There goes a rainbow..."
+        },
     )
 
 
@@ -161,4 +177,23 @@ async def read_unicorn(name: str):
         raise UnicornException(name=name)
     return {"unicorn_name": name}
 
+
 # More error handling info here https://fastapi.tiangolo.com/tutorial/handling-errors/
+
+
+@app.get("/deprecated-path/", tags=["items"], deprecated=True)
+async def read_elements():
+    return [{"item_id": "Foo"}]
+
+
+
+# Middleware to add a response header such as
+# x-process-time: 0.0004627704620361328 
+# to every requests
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = time.time() - start_time
+    response.headers["X-Process-Time"] = str(process_time)
+    return response
