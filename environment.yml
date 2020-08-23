@@ -1,4 +1,4 @@
-name: fastapi-test
+name: fastapitest
 channels:
   - default
   - conda-forge

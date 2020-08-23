@@ -1,6 +1,6 @@
 # fastapi-test
 
-Dummy project to test the FastAPI web framework
+Dummy project to test the FastAPI REST framework, with no database
 
 ### Prerequisites
 
