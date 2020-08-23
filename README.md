@@ -56,3 +56,6 @@ In 3 seperate terminal windows, run concurrently the following commands
 `for i in {1..1000}; do curl -X POST "http://0.0.0.0:5700/task/run/MOYNE/$i" -H "accept: application/json"; done`
 
 The webserver handles the 3000 requests within seconds!
+
+To do:
+- Use https://letsencrypt.org for HTTPS

@@ -1,8 +1,10 @@
 import time
+from pathlib import Path
 
 import graphene
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from starlette.graphql import GraphQLApp
 from starlette.middleware.cors import CORSMiddleware
 
@@ -17,12 +19,14 @@ app = FastAPI(
     description=settings.PROJECT_DESCRIPTION,
     version=settings.VERSION,
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
-    docs_url=f"{settings.API_V1_DOCS}",
+    docs_url=f"{settings.API_V1_STR}/docs",
     redoc_url=None,
 )
 
+STATIC_DIR = Path(__file__).resolve().parent / "web" / "static"
+
 # Add templates and mount static files
-# app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 # Add middleware
 @app.middleware("http")

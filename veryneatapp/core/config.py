@@ -12,10 +12,9 @@ class Settings(BaseSettings):
     )
     VERSION: str = getenv("VERSION", "0.1.0")
     API_V1_STR: str = "/api/v1"
-    API_V1_DOCS: str = f"{API_V1_STR}/docs"
-
     WEBSERVER_HOST: str = getenv("WEBSERVER_HOST", "0.0.0.0")
     WEBSERVER_PORT: int = int(getenv("WEBSERVER_PORT", 5700))
+
     RELOAD: bool = getenv("RELOAD", True)
     DEBUG: bool = getenv("DEBUG", True)
     WORKERS_COUNT: int = int(getenv("WORKERS_COUNT", 1))

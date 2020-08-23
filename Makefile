@@ -42,3 +42,12 @@ lint:
 
 tests:
 	@ ./build_steps/ci_pipeline/3_run_pytest.sh
+
+build:
+	@ docker build -t ${IMAGE_REPOSITORY} .
+
+up:
+	@ cd deployment && docker-compose up -d
+
+down:
+	@ cd deployment && docker-compose down
