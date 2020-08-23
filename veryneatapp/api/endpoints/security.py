@@ -17,15 +17,16 @@ Simplified flow:
    a. To authenticate with our API, the frontend sends a header Authorization="Bearer"+ " " + <token>.
 """
 from datetime import datetime, timedelta
-from typing import Dict, Optional
+from typing import Dict
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from pydantic import BaseModel
-from veryneatapp.api.schemas.user import User, UserInDB
+
 from veryneatapp.api.schemas.token import Token, TokenPayload
+from veryneatapp.api.schemas.user import User, UserInDB
+
 router = APIRouter()
 
 

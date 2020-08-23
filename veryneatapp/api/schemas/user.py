@@ -1,7 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr, Field
-
+from pydantic import BaseModel, EmailStr
 
 # class User(BaseModel):
 #     """
@@ -22,12 +21,15 @@ class UserBase(BaseModel):
     email: Optional[EmailStr] = None
     is_active: Optional[bool] = True
     is_superuser: bool = False
-    
+
+
 class User(UserBase):
     pass
 
+
 class UserOut(UserBase):
     pass
+
 
 # Properties to receive via API on creation
 class UserCreate(UserBase):

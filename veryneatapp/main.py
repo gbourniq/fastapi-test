@@ -1,18 +1,15 @@
 import time
 
+import graphene
 from fastapi import FastAPI, Request
-from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
+from starlette.graphql import GraphQLApp
 from starlette.middleware.cors import CORSMiddleware
 
 from veryneatapp.api import api_router
-from veryneatapp.web.web import web_router
-from veryneatapp.core.config import settings
-
-import graphene
-from starlette.graphql import GraphQLApp
 from veryneatapp.api.custom_exceptions import UnicornException
-
+from veryneatapp.core.config import settings
+from veryneatapp.web.web import web_router
 
 # Initialise FastAPI app
 app = FastAPI(

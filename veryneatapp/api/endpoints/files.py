@@ -1,6 +1,6 @@
-from fastapi import APIRouter, status, Path, Query, File, Form, UploadFile
-from fastapi.responses import HTMLResponse
-from typing import Dict, List, Optional, Union, Set
+from typing import List
+
+from fastapi import APIRouter, File, Form, Query, UploadFile, status
 
 router = APIRouter()
 
@@ -13,14 +13,16 @@ async def upload_files(files: List[UploadFile] = File(...)):
     Upload files and save file to server filesystem
     """
     for myfile in files:
-        binary_file = myfile.file._file.read() # read file into memory
+        binary_file = myfile.file._file.read()  # read file into memory
         with open(myfile.filename.split("¦")[-1], "w+b") as f:
             f.write(binary_file)
 
     return {"files": [_file.__dict__ for _file in files]}
 
 
-@router.post("/upload-files-and-form-data/", status_code=status.HTTP_202_ACCEPTED)
+@router.post(
+    "/upload-files-and-form-data/", status_code=status.HTTP_202_ACCEPTED
+)
 async def upload_files_and_form_data(
     file_A: bytes = File(...),
     file_B: UploadFile = File(...),
@@ -32,8 +34,6 @@ async def upload_files_and_form_data(
         "token": token,
         "fileb_content_type": file_B.content_type,
     }
-
-
 
 
 # Upload file via a web page

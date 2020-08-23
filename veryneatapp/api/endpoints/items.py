@@ -1,8 +1,9 @@
+from typing import Dict, List, Union
+
 from fastapi import APIRouter, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 
-from typing import Dict, List, Optional, Union, Set
-from veryneatapp.api.schemas.item import SimpleItem, CarItem, PlaneItem
+from veryneatapp.api.schemas.item import CarItem, PlaneItem, SimpleItem
 
 router = APIRouter()
 
@@ -46,7 +47,11 @@ async def return_multiple_items():
 
 # Return list of different models
 items = {
-    "item1": {"name": "Foow", "description": "All my friends drive a low rider", "type": "car"},
+    "item1": {
+        "name": "Foow",
+        "description": "All my friends drive a low rider",
+        "type": "car",
+    },
     "item2": {
         "description": "Music is my aeroplane, it's my aeroplane",
         "type": "plane",
@@ -80,7 +85,7 @@ async def update_item(item_id: str, car_item: CarItem):
     Must specify item1 representing the car item
     """
     update_item_encoded = car_item.dict()
-    items[item_id] = update_item_encoded # updating car item in items dict
+    items[item_id] = update_item_encoded  # updating car item in items dict
     return update_item_encoded
 
 
@@ -98,6 +103,7 @@ async def partial_update_item(item_id: str, item: CarItem):
     updated_item = stored_item_model.copy(update=update_data)
     items[item_id] = jsonable_encoder(updated_item)
     return updated_item
+
 
 # Response with arbitrary dict
 @router.get("/keyword-weights/", response_model=Dict[str, float])

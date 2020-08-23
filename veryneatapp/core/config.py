@@ -1,8 +1,7 @@
-from typing import Any, Dict, List, Optional, Union
+from os import getenv
+from typing import List, Union
 
 from pydantic import AnyHttpUrl, BaseSettings, validator
-
-from os import getenv
 
 
 class Settings(BaseSettings):

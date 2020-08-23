@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+
 from veryneatapp.api.custom_exceptions import UnicornException
 
 router = APIRouter()

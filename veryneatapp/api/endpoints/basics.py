@@ -1,8 +1,14 @@
-from fastapi import APIRouter, Cookie, status, Path, Body, Depends
-from typing import Dict, List, Optional, Union, Set
 from datetime import datetime, time, timedelta
+from typing import Dict, Optional
 from uuid import UUID
-from veryneatapp.api.dependencies.core_dependencies import CommonQueryParams, KeyTokenAuth, query_or_cookie_extractor
+
+from fastapi import APIRouter, Body, Cookie, Depends, Path, status
+
+from veryneatapp.api.dependencies.core_dependencies import (
+    CommonQueryParams,
+    KeyTokenAuth,
+    query_or_cookie_extractor,
+)
 
 router = APIRouter()
 
@@ -69,6 +75,7 @@ async def advanced_datatypes(
         "duration": duration,
     }
 
+
 # DEPENDENCIES
 """
 "Dependency Injection" means, in programming, that there is a way for your code
@@ -95,7 +102,7 @@ All these dependencies, while declaring their requirements,
 also add parameters, validations, etc. to your path operations.
 """
 
-# In the case below, we abstract the Query/Path/Body parameters 
+# In the case below, we abstract the Query/Path/Body parameters
 # by definining them in a class dependency CommonQueryParams
 @router.get("/simple-dependency/", tags=["dependencies examples"])
 async def read_items(commons: CommonQueryParams = Depends(CommonQueryParams)):
@@ -124,8 +131,11 @@ async def read_query_or_cookie_extractor(
 # For dependencies that dont return any values - using `dependencies=`
 @router.get(
     "/no-returned-values-from-depencies/",
-    dependencies=[Depends(KeyTokenAuth.verify_token), Depends(KeyTokenAuth.verify_key)],
-    tags=["dependencies examples"]
+    dependencies=[
+        Depends(KeyTokenAuth.verify_token),
+        Depends(KeyTokenAuth.verify_key),
+    ],
+    tags=["dependencies examples"],
 )
 async def read_items():
     return [{"item": "Foo"}, {"item": "Bar"}]
@@ -138,6 +148,7 @@ async def get_db():
         yield db  # what is injected into the path operations and other dependencies
     finally:
         db.close()  #  executed after the response has been delivered
+
 
 """
 It might be tempting to raise an HTTPException or similar in the exit code, 

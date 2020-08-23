@@ -1,6 +1,9 @@
+from typing import Optional
+
+from fastapi import Cookie, Depends, Header
+
 from veryneatapp.api.schemas.user import UserCreate, UserInDB
-from typing import Dict, List, Optional, Union, Set
-from fastapi import Depends, Cookie, Header
+
 
 class CommonQueryParams:
     """First dependency (must be callable)
@@ -27,11 +30,15 @@ class CommonQueryParams:
 If the user didn't provide any query q,
 we use the last query used, which we saved to a cookie before.
 """
+
+
 def query_extractor(q: Optional[str] = None):
     return q
 
+
 def query_or_cookie_extractor(
-    q: str = Depends(query_extractor), last_query: Optional[str] = Cookie(default="last-default-dummy-query")
+    q: str = Depends(query_extractor),
+    last_query: Optional[str] = Cookie(default="last-default-dummy-query"),
 ):
     if not q:
         return last_query
@@ -45,7 +52,9 @@ class KeyTokenAuth:
         x_token: str = Header(default="fake-super-secret-token"),
     ):
         if x_token != "fake-super-secret-token":
-            raise HTTPException(status_code=400, detail="X-Token header invalid")
+            raise HTTPException(
+                status_code=400, detail="X-Token header invalid"
+            )
         return x_token  # won't be used because if called with dependencies=[Depends(KeyTokenAuth.verify_token)]
 
     @staticmethod
@@ -73,7 +82,9 @@ class DummyUserManagementExample:
 
     @staticmethod
     def fake_save_user(user_in: UserCreate):
-        hashed_password = DummyUserManagementExample.fake_password_hasher(user_in.password)
+        hashed_password = DummyUserManagementExample.fake_password_hasher(
+            user_in.password
+        )
         user_in_db = UserInDB(**user_in.dict(), hashed_password=hashed_password)
         print("User saved! ..not really")
         return user_in_db

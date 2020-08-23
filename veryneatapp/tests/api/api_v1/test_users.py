@@ -1,10 +1,3 @@
-from typing import Dict
-
-from fastapi.testclient import TestClient
-
-from app.core.config import settings
-
-
 # def test_get_users_superuser_me(
 #     client: TestClient, superuser_token_headers: Dict[str, str]
 # ) -> None:

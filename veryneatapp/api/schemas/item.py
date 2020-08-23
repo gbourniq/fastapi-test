@@ -1,6 +1,6 @@
-from typing import Dict, List, Optional, Union, Set
+from typing import List, Optional, Set
 
-from pydantic import BaseModel, EmailStr, Field, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl
 
 
 class Image(BaseModel):

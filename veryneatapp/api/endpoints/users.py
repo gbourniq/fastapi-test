@@ -1,8 +1,10 @@
-from fastapi import APIRouter, status, Depends
-from veryneatapp.api.schemas.user import UserCreate, UserOut, UserInDB
+from fastapi import APIRouter, Depends, status
+
 from veryneatapp.api.dependencies.core_dependencies import (
+    CommonQueryParams,
     DummyUserManagementExample,
 )
+from veryneatapp.api.schemas.user import UserInDB, UserOut
 
 router = APIRouter()
 
@@ -30,7 +32,9 @@ async def read_user(username: str):
     response_model=UserOut,
     status_code=status.HTTP_201_CREATED,
 )
-async def create_user(user_saved: UserInDB = Depends(DummyUserManagementExample.fake_save_user)):
+async def create_user(
+    user_saved: UserInDB = Depends(DummyUserManagementExample.fake_save_user),
+):
     """
     Here, user_saved contains the password
     but because we specify response_model=UserOut which does NOT

@@ -1,8 +1,3 @@
-from fastapi.testclient import TestClient
-
-from app.core.config import settings
-
-
 # def test_create_item(
 #     client: TestClient, superuser_token_headers: dict, db: Session
 # ) -> None:

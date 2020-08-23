@@ -1,10 +1,12 @@
-from fastapi import APIRouter, BackgroundTasks, Body, Path, Query, status
-from typing import Dict, List, Optional, Union, Set
-from enum import Enum
-from veryneatapp.api.schemas.user import User
-from veryneatapp.api.schemas.item import Item
-from time import sleep
 from datetime import datetime
+from enum import Enum
+from time import sleep
+from typing import Dict, Optional
+
+from fastapi import APIRouter, BackgroundTasks, Body, Path, Query, status
+
+from veryneatapp.api.schemas.item import Item
+from veryneatapp.api.schemas.user import User
 
 router = APIRouter()
 
@@ -37,8 +39,7 @@ def _task_run(
 
 
 @router.post(
-    "/run/{task_id}",
-    status_code=status.HTTP_200_OK,
+    "/run/{task_id}", status_code=status.HTTP_200_OK,
 )
 async def task_run(
     model_name: ModelName,
