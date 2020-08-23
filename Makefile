@@ -34,7 +34,7 @@ env:
 	@ MESSAGE "- source .env"
 
 pre-commit:
-	@ pmre-commit install -t pre-commit -t commit-msg
+	@ pre-commit install -t pre-commit -t commit-msg
 	@ SUCCESS "pre-commit set up successfully!"
 
 lint: 
