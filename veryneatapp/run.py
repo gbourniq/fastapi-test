@@ -1,13 +1,13 @@
 import uvicorn
 
-from config import WEBSERVER_PORT, RELOAD, DEBUG, WORKERS_COUNT
+from veryneatapp.core.config import settings
 
 if __name__ == "__main__":
     uvicorn.run(
         "veryneatapp.main:app",
-        host="0.0.0.0",
-        port=WEBSERVER_PORT,
-        reload=RELOAD,
-        debug=DEBUG,
-        workers=WORKERS_COUNT,
+        host=settings.WEBSERVER_HOST,
+        port=settings.WEBSERVER_PORT,
+        reload=settings.RELOAD,
+        debug=settings.DEBUG,
+        workers=settings.WORKERS_COUNT,
     )
